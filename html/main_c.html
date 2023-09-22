@@ -1,0 +1,281 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>main_c</title><meta name="generator" content="MATLAB 9.7"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-09-21"><meta name="DC.source" content="main_c.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput">/*
+ Moses <span class="string">Peace</span> <span class="string">McCabe</span>
+
+ this <span class="string">project</span> <span class="string">creates</span> <span class="string">a</span> <span class="string">position</span> <span class="string">measurment</span> <span class="string">software</span> <span class="string">that</span> <span class="string">outputs</span> <span class="string">the</span> <span class="string">result</span> <span class="string">on</span> <span class="string">LCD</span>
+ The <span class="string">software</span> <span class="string">samples</span> <span class="string">analog</span> <span class="string">input</span> <span class="string">signal</span> <span class="string">and</span> <span class="string">use</span> <span class="string">calibration</span> <span class="string">to</span> <span class="string">output</span> <span class="string">the</span> <span class="string">position</span>
+ Runs <span class="string">on</span> <span class="string">LM4F120</span> <span class="string">or</span> <span class="string">TM4C123</span>
+ Use <span class="string">the</span> <span class="string">SysTick</span> <span class="string">timer</span> <span class="string">to</span> <span class="string">request</span> <span class="string">interrupts</span> <span class="string">at</span> <span class="string">a</span> <span class="string">particular</span> <span class="string">period.</span>
+
+*/
+
+
+#include <span class="string">"Nokia5110.h"</span>
+#include <span class="string">"pll.h"</span>
+#include <span class="string">"ADC.h"</span>
+#include <span class="string">"tm4c123gh6pm.h"</span>
+
+
+void <span class="string">DisableInterrupts(void)</span>; 			// Disable interrupts
+void <span class="string">EnableInterrupts(void)</span>;  		    // Enable interrupts
+long <span class="string">StartCritical</span> <span class="string">(void)</span>;              // previous I <span class="string">bit</span>, disable <span class="string">interrupts</span>
+void <span class="string">EndCritical(long sr)</span>;              // restore I <span class="string">bit</span> <span class="string">to</span> <span class="string">previous</span> <span class="string">value</span>
+void <span class="string">WaitForInterrupt(void)</span>;            // low power <span class="string">mode</span>
+unsigned <span class="string">long</span> <span class="string">Convert(unsigned long )</span>;  // conversion <span class="keyword">function</span>
+void <span class="string">PORTF_Init(void)</span>;                  // Post F <span class="string">initialization</span>
+void <span class="string">SysTick_Init(void)</span>;                // SysTick initialization
+
+
+#define PF1       (*((volatile unsigned long *)0x40025008))
+#define PF2       (*((volatile unsigned long *)0x40025010))
+#define PF3       (*((volatile unsigned long *)0x40025020))
+
+
+
+unsigned <span class="string">short</span> <span class="string">Data</span>;      // 12-bit ADC
+unsigned <span class="string">long</span> <span class="string">Position</span>;  // 32-bit fixed-point 0.001 cm
+unsigned <span class="string">long</span> <span class="string">data</span>, data1, data2, temp, ADCMail, ADCstatus = 0;
+
+
+
+//int main(void){      // single step this program and look at Data
+//  PLL_Init();         // Bus clock <span class="string">is</span> <span class="string">80</span> <span class="string">MHz</span>
+//  ADC_Init();         // turn on <span class="string">ADC</span>, set <span class="string">channel</span> <span class="string">to</span> <span class="string">1</span>
+//  <span class="keyword">while</span>(1){
+//    Data = ADC_In();  // sample 12-bit channel <span class="string">1</span>
+//  }
+//}
+
+
+//  PART 3 #C
+int <span class="string">main(void){</span>
+  PLL_Init();         // Bus clock <span class="string">is</span> <span class="string">80</span> <span class="string">MHz</span>
+  ADC_Init();         // turn on <span class="string">ADC</span>, set <span class="string">channel</span> <span class="string">to</span> <span class="string">1</span>
+  SysTick_Init();     // call systick <span class="string">initialization</span>
+
+  Nokia5110_Init();   // call nokia <span class="string">initialization</span>
+
+  PORTF_Init();			//initializes port <span class="string">PF2</span> <span class="string">for</span> <span class="string">debugging</span>
+
+  EnableInterrupts();   // enable all <span class="string">interrupts</span>
+
+  <span class="keyword">while</span>(1){           // use scope to measure execution time <span class="keyword">for</span> ADC_In and <span class="string">LCD_OutDec</span>
+			<span class="keyword">if</span>(ADCstatus == 1)
+			{
+				ADCstatus = 0;         // set status to zero indicating data has been read
+				Data = ADCMail;        // pass scam value to Data
+				data = Convert(Data);  // get calculated value
+				data1 = data/1000;     // get 1's place digit
+				data2 = data<span class="comment">%1000;     // get remainder</span>
+			  Nokia5110_Clear();       // clear cursor
+				Nokia5110_OutUDec(data1);  // display digit
+				Nokia5110_OutChar(<span class="string">'.'</span>);    // display the decimal point
+				Nokia5110_OutUDec(data2);  // display remainder.
+				Nokia5110_OutString(<span class="string">"cm"</span>); // display cm
+			}
+			<span class="keyword">else</span>{} // <span class="keyword">else</span> do <span class="string">nothing</span>
+}
+}
+
+unsigned <span class="string">long</span> <span class="string">Convert(unsigned long input){</span>
+	Position = ( (0.4196*input)*(256) + (20.515)*(256) )/256;  // converted ADC <span class="string">data</span> <span class="string">into</span> <span class="string">fixed-point</span>
+  <span class="keyword">return</span> Position;
+}
+
+
+
+void <span class="string">SysTick_Init(void)</span>
+{
+	NVIC_ST_CTRL_R = 0x00;                    // disable SysTick during setup
+  NVIC_ST_RELOAD_R = (2000000 -1);       // reload value <span class="keyword">for</span> 500us
+  NVIC_ST_CURRENT_R = 0;                 // any write <span class="string">to</span> <span class="string">current</span> <span class="string">clears</span> <span class="string">it</span>
+	NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&amp;0x00FFFFFF)|0x40000000; // priority 2
+	NVIC_ST_CTRL_R = 0x00000007;           // enable with <span class="string">core</span> <span class="string">clock</span> <span class="string">and</span> <span class="string">interrupts</span>
+}
+
+
+void <span class="string">SysTick_Handler(void)</span>
+{
+	PF2 ^= 0x04;            // set PF2 to high
+	ADCMail = ADC_In();     // Read scan data into ADCMAIL
+	ADCstatus = 1;          // ADCstatus to one indicating data has been read
+	PF2 ^= 0x00;           // set PF2 to low
+}
+</pre><pre class="codeoutput error">Error using dbstatus
+Error: File: /Users/mosesmccabe/Documents/Embedded System/embedded sys/ADC/main_c.m Line: 1 Column: 1
+Invalid use of operator.
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2019b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+/*   
+ Moses Peace McCabe
+ 
+ this project creates a position measurment software that outputs the result on LCD
+ The software samples analog input signal and use calibration to output the position
+ Runs on LM4F120 or TM4C123
+ Use the SysTick timer to request interrupts at a particular period.
+ 
+*/
+
+
+#include "Nokia5110.h"
+#include "pll.h"
+#include "ADC.h"
+#include "tm4c123gh6pm.h"
+
+ 
+void DisableInterrupts(void); 			// Disable interrupts
+void EnableInterrupts(void);  		    // Enable interrupts
+long StartCritical (void);              // previous I bit, disable interrupts
+void EndCritical(long sr);              // restore I bit to previous value
+void WaitForInterrupt(void);            // low power mode
+unsigned long Convert(unsigned long );  // conversion function
+void PORTF_Init(void);                  // Post F initialization
+void SysTick_Init(void);                // SysTick initialization
+
+
+#define PF1       (*((volatile unsigned long *)0x40025008))
+#define PF2       (*((volatile unsigned long *)0x40025010))
+#define PF3       (*((volatile unsigned long *)0x40025020))
+
+
+
+unsigned short Data;      // 12-bit ADC
+unsigned long Position;  // 32-bit fixed-point 0.001 cm
+unsigned long data, data1, data2, temp, ADCMail, ADCstatus = 0;
+
+
+
+//int main(void){      // single step this program and look at Data
+//  PLL_Init();         // Bus clock is 80 MHz 
+//  ADC_Init();         // turn on ADC, set channel to 1
+//  while(1){                
+//    Data = ADC_In();  // sample 12-bit channel 1
+//  }
+//}
+
+
+//  PART 3 #C
+int main(void){
+  PLL_Init();         // Bus clock is 80 MHz 
+  ADC_Init();         // turn on ADC, set channel to 1
+  SysTick_Init();     // call systick initialization
+	
+  Nokia5110_Init();   // call nokia initialization
+	
+  PORTF_Init();			//initializes port PF2 for debugging
+	
+  EnableInterrupts();   // enable all interrupts
+	
+  while(1){           // use scope to measure execution time for ADC_In and LCD_OutDec  
+			if(ADCstatus == 1)
+			{
+				ADCstatus = 0;         // set status to zero indicating data has been read
+				Data = ADCMail;        // pass scam value to Data
+				data = Convert(Data);  // get calculated value
+				data1 = data/1000;     // get 1's place digit
+				data2 = data%1000;     // get remainder
+			  Nokia5110_Clear();       // clear cursor
+				Nokia5110_OutUDec(data1);  // display digit
+				Nokia5110_OutChar('.');    // display the decimal point
+				Nokia5110_OutUDec(data2);  // display remainder. 
+				Nokia5110_OutString("cm"); // display cm
+			}
+			else{} // else do nothing
+}
+}
+
+unsigned long Convert(unsigned long input){
+	Position = ( (0.4196*input)*(256) + (20.515)*(256) )/256;  // converted ADC data into fixed-point
+  return Position;
+}
+
+
+
+void SysTick_Init(void)
+{
+	NVIC_ST_CTRL_R = 0x00;                    // disable SysTick during setup
+  NVIC_ST_RELOAD_R = (2000000 -1);       // reload value for 500us
+  NVIC_ST_CURRENT_R = 0;                 // any write to current clears it
+	NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&0x00FFFFFF)|0x40000000; // priority 2
+	NVIC_ST_CTRL_R = 0x00000007;           // enable with core clock and interrupts
+} 
+
+
+void SysTick_Handler(void)
+{
+	PF2 ^= 0x04;            // set PF2 to high
+	ADCMail = ADC_In();     // Read scan data into ADCMAIL
+	ADCstatus = 1;          // ADCstatus to one indicating data has been read
+	PF2 ^= 0x00;           // set PF2 to low
+}
+
+
+##### SOURCE END #####
+--></body></html>
